@@ -17,6 +17,10 @@ step = round((maxNum - minNum) / countInterval, 1)
 
 i = 0
 xi = begin
+print("_____________________________________________________________________________")
+print("|\t\t|   Borders of  | Middle of | Count of numbers |\t     |")
+print("| № of interval |    interval   |  interval |    on interval   | Probability |")
+print("|_______________|_______________|___________|__________________|_____________|")
 while i < countInterval:
     num = 0
     for item in data:
@@ -28,6 +32,8 @@ while i < countInterval:
             num +=1
     middle = xi + step / 2
     probability = num / len(data)
-    print('{0:5}  ({1:5};{2:5})  {3:5}  {4:5}  {5:6}'.format(i + 1, xi, xi + step, middle, num, round(probability, 3)))
+    print('| {0:^13} | ({1:5};{2:5}) | {3:9} | {4:^16} | {5:^11} |'
+          .format(i + 1, xi, xi + step, middle, num, round(probability, 3)))
     i += 1
     xi += step
+print("—————————————————————————————————————————————————————————————————————————————")
