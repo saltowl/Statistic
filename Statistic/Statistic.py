@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 countInterval = 12
 
 input = open("data.txt")
@@ -17,6 +20,8 @@ step = round((maxNum - minNum) / countInterval, 1)
 
 i = 0
 xi = begin
+x = []
+y = []
 print("_____________________________________________________________________________")
 print("|\t\t|   Borders of  | Middle of | Count of numbers |\t     |")
 print("| № of interval |    interval   |  interval |    on interval   | Probability |")
@@ -34,6 +39,15 @@ while i < countInterval:
     probability = num / len(data)
     print('| {0:^13} | ({1:5};{2:5}) | {3:9} | {4:^16} | {5:^11} |'
           .format(i + 1, xi, xi + step, middle, num, round(probability, 3)))
+    x.append(xi)
+    y.append(probability / step)
     i += 1
     xi += step
 print("—————————————————————————————————————————————————————————————————————————————")
+
+plt.style.use("bmh")
+plt.bar(x, y, step - 0.05, align = 'edge', color = 'sandybrown', edgecolor = 'sienna')
+plt.xlabel("x")
+plt.ylabel("p / h")
+plt.title("Histogram")
+plt.show()
