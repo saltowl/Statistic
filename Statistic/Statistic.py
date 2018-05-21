@@ -14,37 +14,37 @@ def PrintHistogram(x, y, step):
     plt.show()
 
 
-def PrintGraph(Fn, middleX, begin, end):
+def PrintGraph(Fn, xGraph, begin, end):
     if min(Fn) != 0.0:
-        Fn.append(0.0)
+        Fn.extend([0.0] * 2)
     if max(Fn) != 1.0:
-        Fn.append(1.0)
+        Fn.extend([1.0] * 4)
 
-    buf = Fn[:]
-    Fn.extend(buf)
+    xGraph.extend([begin, end])
+
     Fn.sort()
-
-    
-    buf.clear()
-    buf = middleX[:]
-    middleX.extend(buf)
-    middleX.extend([begin, end])
-    middleX.sort()
+    xGraph.sort()
 
     plt.style.use("bmh")
     plt.xlim([begin, end])
-    #plt.plot(middleX, Fn)
-    #plt.show()
-    n = min(len(Fn), len(middleX))
+    plt.ylim([-0.05, 1.05])
+
     i = 0
-    while i < n:
-        print("{0:5} {1:5}".format(Fn[i], middleX[i]))
-        i += 1
-    print(middleX)
-    print(Fn)
+    while i < len(Fn) - 2:
+        plt.plot([xGraph[i], xGraph[i+1]], [Fn[i], Fn[i+1]], color = 'firebrick')
+        plt.plot([xGraph[i]] * 2, [Fn[i], 0], color = 'tomato', linestyle = '--', linewidth = 1)
+        plt.plot([begin, xGraph[i]], [Fn[i]] * 2, color = 'brown', linestyle = ':', linewidth = 1)
+        i += 2
+
+    plt.plot([xGraph[i], xGraph[i+1]], [Fn[i], Fn[i+1]], color = 'firebrick')
+    plt.xlabel("X")
+    plt.ylabel("F(X)")
+    plt.title("Graph of the empirical distribution function")
+    plt.show()
 
 
 def TableHeader():
+    print("\nTable 1")
     print("_________________________________________________________________________________________________")
     print("|\t\t|   Borders of  | Middle of | Count of numbers |\t     |         |         |")
     print("| № of interval |    interval   |  interval |    on interval   | Probability |  xᵢ*pᵢ  |  xᵢ²*pᵢ |")
@@ -57,16 +57,15 @@ def Table(begin, data, end, step, minNum, maxNum):
     x = []
     y = []
     Fn = []
-    middleX = [minNum]
+    xGraph = [xi]
     expectedValue = 0
     dispersion = 0
-    countLessThanMiddle = 0
+    yFn = 0
 
     TableHeader()
     
     while i < countInterval:
         countNumOnInterval = 0
-        countLessThanMiddle = 0
 
         for item in data:
             if (((item < xi + step) & (item > xi) & (xi != begin) & (xi != end)) 
@@ -75,15 +74,11 @@ def Table(begin, data, end, step, minNum, maxNum):
                 countNumOnInterval +=1
         
         middle = xi + step / 2
-        middleX.append(middle)
-
         probability = countNumOnInterval / len(data)
-
-        for item in data:
-            if (item <= middle):
-                countLessThanMiddle += 1
         
-        Fn.append(countLessThanMiddle / len(data))
+        yFn += probability
+        xGraph.extend([xi, xi + step])
+        Fn.extend([yFn] * 2)
 
         expectedValue += probability * middle
         dispersion += probability * middle**2
@@ -106,17 +101,20 @@ def Table(begin, data, end, step, minNum, maxNum):
     print("Confidence interval for mathematical expectation: [{0}, {1}], i.e {0} < {2} < {1}"
           .format(round(beginConfidence, 3), round(endConfidence, 3), round(expectedValue, 3)))
 
-    countLessThanMiddle = 0
-    for item in data:
-       if (item < maxNum):
-           countLessThanMiddle += 1
-    print(countLessThanMiddle)
-    Fn.append(countLessThanMiddle / len(data))
-
-    middleX.append(maxNum)
     PrintHistogram(x, y, step)
-    PrintGraph(Fn, middleX, begin, end)
+    xGraph.append(float(end))
+    Fn.extend([1.0] * 2)
+    PrintGraph(Fn, xGraph, begin - 1, end + 1)
 
+
+def PrintData(data):
+    x = 0
+    print("\nInitial data\n")
+    for i in range(5):
+        for j in range(4):
+            print("{:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} ".format(*data[x:x+10]))
+            x += 10
+        print()
 
 def Main():
     input = open("data.txt")
@@ -125,7 +123,7 @@ def Main():
     data = [float(item) for item in dataStrings]
     data.sort()
 
-    #print(data)
+    PrintData(data)
 
     minNum = data[0]
     begin = math.floor(minNum)
