@@ -11,6 +11,11 @@ def PrintHistogram(x, y, step):
     plt.xlabel("x")
     plt.ylabel("p / h")
     plt.title("Histogram")
+
+    s = 'S = p₄ = ' + str(round(y[3] * step, 3))
+    plt.annotate(s, xy=(x[3] + (step / 2), y[3]), xytext=(x[0], y[4]),
+            arrowprops={'facecolor': 'brown', 'shrink': 0.05})
+
     plt.show()
 
 
@@ -110,6 +115,7 @@ def Table(begin, data, end, step, minNum, maxNum):
 def PrintData(data):
     x = 0
     print("\nInitial data\n")
+
     for i in range(5):
         for j in range(4):
             print("{:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} {:6} ".format(*data[x:x+10]))
